@@ -21,12 +21,15 @@ bool MazeSolver::Solver::Solve()
         S.Push(p)
         do
             p = S.Pop()
-            if p is not adjacent
+            if p is not adjacent or not accessible
                 I.Backtrack(B) until p is adjacent
                 B.Minus()
 
             B.Plus()
             I.Go(p)
+
+            if p is the exit
+                end
 
             label p as discovered
             for w in M.AdjacentEdges(p)
