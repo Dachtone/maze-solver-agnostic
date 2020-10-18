@@ -7,7 +7,7 @@ bool Scan(MazeSolver::Direction direction)
 
 void Move(MazeSolver::Direction direction)
 {
-    // Moving
+	// Moving
 }
 
 int main()
