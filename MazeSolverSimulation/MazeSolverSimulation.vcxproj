@@ -141,10 +141,13 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="maze\mazesolver.cpp" />
+    <ClCompile Include="maze\obstacle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="maze\list.h" />
     <ClInclude Include="maze\mazesolver.h" />
+    <ClInclude Include="maze\obstacle.h" />
+    <ClInclude Include="maze\queue.h" />
     <ClInclude Include="maze\stack.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

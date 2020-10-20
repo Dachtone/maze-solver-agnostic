@@ -21,6 +21,9 @@
     <ClCompile Include="maze\mazesolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="maze\obstacle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="maze\mazesolver.h">
@@ -30,6 +33,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="maze\list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="maze\obstacle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="maze\queue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

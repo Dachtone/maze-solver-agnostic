@@ -5,25 +5,25 @@
 namespace MazeSolver
 {
 
-	// This class hides an implementation of the stack
+	// This class hides an implementation of the queue
 	template<typename T>
-	class Stack
+	class Queue
 	{
 
 	public:
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		Stack() {}
+		Queue() {}
 
 		/// <summary>
 		/// Constructor from a list.
 		/// </summary>
-		Stack(List<T> other)
+		Queue(List<T> other)
 			: list(other) {}
 
 		/// <summary>
-		/// Checks whether the stack is empty.
+		/// Checks whether the queue is empty.
 		/// </summary>
 		/// <returns>True if empty, false otherwise.</returns>
 		bool IsEmpty()
@@ -32,7 +32,7 @@ namespace MazeSolver
 		}
 
 		/// <summary>
-		/// Push a value on to the stack.
+		/// Push a value to the queue.
 		/// </summary>
 		/// <param name="value">A value to push.</param>
 		void Push(T value)
@@ -41,28 +41,19 @@ namespace MazeSolver
 		}
 
 		/// <summary>
-		/// Pop a value from the stack.
+		/// Pop a value from the queue.
 		/// </summary>
 		/// <returns>A popped value.</returns>
 		T Pop()
 		{
-			return list.Pop();
+			return list.Dequeue();
 		}
 
 		/// <summary>
-		/// Peek into the stack.
-		/// </summary>
-		/// <returns>A value.</returns>
-		T Peek()
-		{
-			return list.Peek();
-		}
-
-		/// <summary>
-		/// Converts the stack to a list.
+		/// Converts the queue to a list.
 		/// </summary>
 		/// <returns>A list.</returns>
-		List<T> &ToList()
+		List<T>& ToList()
 		{
 			return list;
 		}
@@ -70,7 +61,7 @@ namespace MazeSolver
 	private:
 		// The implementation
 		List<T> list;
-		// std::stack<T> stack;
+		// std::queue<T> queue;
 
 	};
 

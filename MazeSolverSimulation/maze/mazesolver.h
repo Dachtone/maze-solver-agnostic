@@ -1,5 +1,10 @@
 #pragma once
 
+#include "list.h"
+#include "stack.h"
+#include "queue.h"
+#include "obstacle.h"
+
 namespace MazeSolver
 {
 
@@ -36,18 +41,19 @@ namespace MazeSolver
 	class Solver
 	{
 
-	private:
+	public:
 		// The dimensions of the maze are constant
-		static const unsigned int width = 5;
-		static const unsigned int height = 5;
-
-		bool discoveredPoints[width * height];
+		static const unsigned int Width = 5;
+		static const unsigned int Height = 5;
 
 		// The index of the start point
-		const int startPoint = 0;
+		const int StartPoint = 0;
 
 		// The index of the exit point
-		const int endPoint = 24;
+		const int EndPoint = 24;
+
+	private:
+		bool discoveredPoints[Width * Height];
 
 		// The external functions that the solver calls
 		ScanFunction scanFunction;
@@ -55,7 +61,7 @@ namespace MazeSolver
 
 	public:
 		// The index of the current point
-		int CurrentPoint = startPoint;
+		int CurrentPoint = StartPoint;
 
 		/// <summary>
 		/// Constructor.
@@ -73,7 +79,7 @@ namespace MazeSolver
 
 	private:
 		/// <summary>
-		/// Follows the shortest path, if an obstacle is hit, the shortest path is recalculated.
+		/// Follows the BFS shortest path, if an obstacle is hit, the shortest path is recalculated.
 		/// </summary>
 		/// <returns>True if the maze is solved, false if there are no paths to the exit.</returns>
 		bool PeriodicCorrectionSolution();
@@ -84,14 +90,29 @@ namespace MazeSolver
 		/// <returns>True if the maze is solved, false if there are no paths to the exit.</returns>
 		bool AlgorithmicRunnerSolution();
 
+	public:
+		/// <summary>
+		/// Searches for the shortest path.
+		/// </summary>
+		/// <param name="initialPoint">The starting point.</param>
+		/// <param name="obstacles">A list of obstacles.</param>
+		/// <param name="path">A place to store the shortest path.</param>
+		/// <returns>True if the maze is solved, false if there are no paths to the exit.</returns>
+		bool GetShortestPath(int initialPoint, MazeSolver::List<MazeSolver::Obstacle> obstacles, MazeSolver::Stack<int>& path);
+
 	private:
 		bool IsDiscovered(int point);
 		void Discover(int point);
+		void ClearDiscovered();
 
 		bool IsAdjacent(int point);
+		bool IsAdjacent(int point, int currentPoint);
+
 		int GetAdjacent(unsigned int index);
+		int GetAdjacent(unsigned int index, int currentPoint);
 
 		Direction GetDirection(int point);
+		Direction GetDirection(int point, int currentPoint);
 
 		bool IsAccessible(int point);
 		void Move(int point);

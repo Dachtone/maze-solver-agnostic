@@ -2,8 +2,6 @@
 #include <thread>
 #include <chrono>
 #include <limits>
-#include <vector>
-#include <utility>
 
 #define NOMINMAX
 #include <Windows.h>
@@ -23,13 +21,15 @@ bool Scan(MazeSolver::Direction direction);
 void Move(MazeSolver::Direction direction);
 
 void DrawMaze(int point);
+void DrawMaze(MazeSolver::List<int> points);
+
 void SetCursorToStartOfTheMaze();
 
 // Obstacles
-std::vector<std::pair<int, int>> obstacles;
+MazeSolver::List<MazeSolver::Obstacle> obstacles;
 
 // The maze
-MazeSolver::Solver maze = MazeSolver::Solver(Scan, Move);
+MazeSolver::Solver maze(Scan, Move);
 
 bool Scan(MazeSolver::Direction direction)
 {
@@ -51,10 +51,10 @@ bool Scan(MazeSolver::Direction direction)
 	}
 
 	bool found = false;
-	for (std::pair<int, int>& obstacle : obstacles)
+	for (MazeSolver::Obstacle &obstacle : obstacles)
 	{
-		if ((obstacle.first == maze.CurrentPoint && obstacle.second == point) ||
-			(obstacle.first == point && obstacle.second == maze.CurrentPoint))
+		if ((obstacle.First == maze.CurrentPoint && obstacle.Second == point) ||
+			(obstacle.First == point && obstacle.Second == maze.CurrentPoint))
 			found = true;
 	}
 
@@ -84,62 +84,72 @@ int main()
 	std::cout << "Obstacles:" << std::endl;
 
 	int temp;
-	std::pair<int, int> obstacle;
+	MazeSolver::Obstacle obstacle;
 	while (true)
 	{
 		std::cin >> temp;
 		if (temp == -1)
 			break;
-		obstacle.first = temp;
+		obstacle.First = temp;
 
 		std::cin >> temp;
 		if (temp == -1)
 			break;
-		obstacle.second = temp;
+		obstacle.Second = temp;
 
-		if (obstacle.first == obstacle.second)
+		if (obstacle.First == obstacle.Second)
 		{
 			std::cout << "Invalid obstacle (same point)." << std::endl;
 			continue;
 		}
 
-		if (obstacle.first < 0 || obstacle.second < 0 ||
-			obstacle.first >= 25 || obstacle.second >= 25)
+		if (obstacle.First < 0 || obstacle.Second < 0 ||
+			obstacle.First >= 25 || obstacle.Second >= 25)
 		{
 			std::cout << "Invalid obstacle (points don't exist)." << std::endl;
 			continue;
 		}
 
-		if (obstacle.first > obstacle.second)
+		if (obstacle.First > obstacle.Second)
 		{
-			obstacle.second ^= obstacle.first;
-			obstacle.first ^= obstacle.second;
-			obstacle.second ^= obstacle.first;
+			obstacle.Second ^= obstacle.First;
+			obstacle.First ^= obstacle.Second;
+			obstacle.Second ^= obstacle.First;
 		}
 
-		int difference = obstacle.second - obstacle.first;
+		int difference = obstacle.Second - obstacle.First;
 		if (difference != 1 && difference != 5)
 		{
 			std::cout << "Invalid obstacle (points aren't adjacent)." << std::endl;
 			continue;
 		}
 
-		for (std::pair<int, int>& otherObstacle : obstacles)
+		for (MazeSolver::Obstacle &otherObstacle : obstacles)
 		{
-			if (otherObstacle.first == obstacle.first && otherObstacle.second == obstacle.second)
+			if (otherObstacle.First == obstacle.First && otherObstacle.Second == obstacle.Second)
 			{
 				std::cout << "Repeating obstacle." << std::endl;
 				continue;
 			}
 		}
 
-		obstacles.push_back(obstacle);
+		obstacles.Push(obstacle);
 	}
 
 	std::cout << std::endl;
 
+	// DrawMaze(maze.CurrentPoint);
+	// bool solved = maze.Solve(MazeSolver::Solution::AlgorithmicRunner);
+
+	/*
+	MazeSolver::Stack<int> path;
+	bool solved = maze.GetShortestPath(0, obstacles, path);
+	path.Push(0);
+	DrawMaze(path.ToList());
+	*/
+
 	DrawMaze(maze.CurrentPoint);
-	bool solved = maze.Solve(MazeSolver::Solution::AlgorithmicRunner);
+	bool solved = maze.Solve(MazeSolver::Solution::PeriodicCorrection);
 
 	std::cout << "The maze " << (solved ? "is" : "cannot be") << " solved." << std::endl;
 
@@ -152,20 +162,41 @@ int main()
 
 void DrawMaze(int point)
 {
+	MazeSolver::List<int> points;
+	points.Push(point);
+
+	DrawMaze(points);
+}
+
+void DrawMaze(MazeSolver::List<int> points)
+{
 	std::string screen = "-----------\n";
 	for (int i = 4; i >= 0; i--)
 	{
 		screen += "|";
 		for (int j = 0; j < 5; j++)
 		{
-			screen += (i * 5 + j == point ? "O" : "*");
+			int drawPoint = i * 5 + j;
+			bool specialPoint = false;
+
+			for (int point : points)
+			{
+				if (point == drawPoint)
+				{
+					specialPoint = true;
+					break;
+				}
+			}
+
+			screen += (specialPoint ? "O" : "*");
+
 			if (j != 4)
 			{
 				bool foundObstacle = false;
-				for (std::pair<int, int>& obstacle : obstacles)
+				for (MazeSolver::Obstacle &obstacle : obstacles)
 				{
-					if ((obstacle.first == i * 5 + j && obstacle.second == i * 5 + j + 1) ||
-						(obstacle.first == i * 5 + j + 1 && obstacle.second == i * 5 + j))
+					if ((obstacle.First == drawPoint && obstacle.Second == drawPoint + 1) ||
+						(obstacle.First == drawPoint + 1 && obstacle.Second == drawPoint))
 					{
 						foundObstacle = true;
 						break;
@@ -186,10 +217,10 @@ void DrawMaze(int point)
 			for (int j = 0; j < 5; j++)
 			{
 				bool foundObstacle = false;
-				for (std::pair<int, int>& obstacle : obstacles)
+				for (MazeSolver::Obstacle &obstacle : obstacles)
 				{
-					if ((obstacle.first == i * 5 + j && obstacle.second == (i - 1) * 5 + j) ||
-						(obstacle.first == (i - 1) * 5 + j && obstacle.second == i * 5 + j))
+					if ((obstacle.First == i * 5 + j && obstacle.Second == (i - 1) * 5 + j) ||
+						(obstacle.First == (i - 1) * 5 + j && obstacle.Second == i * 5 + j))
 					{
 						foundObstacle = true;
 						break;
