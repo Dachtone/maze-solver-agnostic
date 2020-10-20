@@ -149,7 +149,7 @@ int main()
 	*/
 
 	DrawMaze(maze.CurrentPoint);
-	bool solved = maze.Solve(MazeSolver::Solution::PeriodicCorrection);
+	bool solved = maze.Solve(MazeSolver::Solution::PeriodicCorrection); // MazeSolver::Solution::PeriodicCorrection
 
 	std::cout << "The maze " << (solved ? "is" : "cannot be") << " solved." << std::endl;
 

@@ -203,7 +203,7 @@ bool MazeSolver::Solver::AlgorithmicRunnerSolution()
 		do
 			p = S.Pop()
 			if p is not adjacent or not accessible
-				I.Backtrack(B) until p is adjacent
+				I.Backtrack(B) until p is adjacent and accessible
 				B.Minus()
 
 			B.Plus()
@@ -246,7 +246,7 @@ bool MazeSolver::Solver::AlgorithmicRunnerSolution()
 					for (unsigned int i = 0; i < 4; i++)
 					{
 						int adjacent = GetAdjacent(i);
-						if (adjacent == point)
+						if (adjacent == point && IsAccessible(adjacent))
 						{
 							foundNextPoint = true;
 							break;
@@ -402,8 +402,14 @@ MazeSolver::Direction MazeSolver::Solver::GetDirection(int point, int currentPoi
 	case Width:
 		return Direction::Up;
 	case 1:
+		if (point / Width != currentPoint / Width)
+			return Direction::Invalid;
+
 		return Direction::Right;
 	case -1:
+		if (point / Width != currentPoint / Width)
+			return Direction::Invalid;
+
 		return Direction::Left;
 	case -((int)Width):
 		return Direction::Down;
