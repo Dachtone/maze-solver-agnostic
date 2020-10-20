@@ -32,16 +32,17 @@ bool MazeSolver::Solver::PeriodicCorrectionSolution()
 		do
 			F = shortest path from I.CurrentPoint to the exit with L considered
 			do
-				I.Go(F.NextPoint)
 				if I reached the exit
 					end
 				L.Add(I.AdjacentObstacles)
+				if I.CanGoTo(F.NextPoint)
+					I.Go(F.NextPoint)
 			while I.CanGoTo(F.NextPoint)
 		while F not empty
 	*/
 
 	List<Obstacle> obstacles;
-	int previousPoint;
+	int previousPoint = CurrentPoint;
 
 	Stack<int> path;
 	while (GetShortestPath(CurrentPoint, obstacles, path))
@@ -49,9 +50,6 @@ bool MazeSolver::Solver::PeriodicCorrectionSolution()
 		bool pathIsBlocked = false;
 		do
 		{
-			previousPoint = CurrentPoint;
-			Move(path.Pop());
-
 			if (CurrentPoint == EndPoint) // Reached the end
 				return true;
 
@@ -92,6 +90,12 @@ bool MazeSolver::Solver::PeriodicCorrectionSolution()
 						path.Pop(); // No longer the preferred direction
 					}
 				}
+			}
+
+			if (!pathIsBlocked)
+			{
+				previousPoint = CurrentPoint;
+				Move(path.Pop());
 			}
 		}
 		while (!pathIsBlocked);
@@ -149,7 +153,7 @@ bool MazeSolver::Solver::GetShortestPath(int initialPoint, List<Obstacle> obstac
 		// 4 possible directions
 		for (unsigned int i = 0; i < 4; i++)
 		{
-			int adjacent = GetAdjacent(i, point);
+			int adjacent = GetAdjacent(i, point, false);
 			if (IsDiscovered(adjacent) || GetDirection(adjacent, point) == Direction::Invalid)
 				continue;
 
@@ -321,41 +325,42 @@ int MazeSolver::Solver::GetAdjacent(unsigned int index)
 	return GetAdjacent(index, CurrentPoint);
 }
 
-int MazeSolver::Solver::GetAdjacent(unsigned int index, int currentPoint)
+int MazeSolver::Solver::GetAdjacent(unsigned int index, int currentPoint, bool reverse)
 {
 	assert(index < 4);
 
+	// Directional preference: Right -> Up -> Left -> Down
+	if (reverse)
+		index = 3 - index;
+
 	int point;
-	// Directional preference: Up / Right -> Left -> Down
-	// thus these directions should be provided in the reversed order
 	switch (index)
 	{
-	case 0: // Down
-		if (currentPoint < Width)
+	case 0: // Right
+		point = currentPoint + 1;
+		if (point % Width == 0)
 			return -1;
 
-		point = currentPoint - Width;
 		return point;
-	case 1: // Left
+	case 1: // Up
+		point = currentPoint + Width;
+		if (point >= Width * Height)
+			return -1;
+
+		return point;
+	case 2: // Left
 		if (currentPoint % Width == 0)
 			return -1;
 
 		point = currentPoint - 1;
 		return point;
+	case 3: // Down
+		if (currentPoint < Width)
+			return -1;
+
+		point = currentPoint - Width;
+		return point;
 	/*
-	case 2: // Right
-		point = currentPoint + 1;
-		if (point % width == 0)
-			return -1;
-
-		return point;
-	case 3: // Up
-		point = currentPoint + width;
-		if (point >= width * height)
-			return -1;
-
-		return point;
-	*/
 	case 2:
 	case 3:
 		bool reverse = currentPoint % 2 != 0;
@@ -375,6 +380,7 @@ int MazeSolver::Solver::GetAdjacent(unsigned int index, int currentPoint)
 		}
 
 		return point;
+	*/
 	}
 
 	// Code should never be able to get here
