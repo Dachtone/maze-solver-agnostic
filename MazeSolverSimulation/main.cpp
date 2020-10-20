@@ -139,7 +139,7 @@ int main()
 	std::cout << std::endl;
 
 	DrawMaze(maze.CurrentPoint);
-	bool solved = maze.Solve();
+	bool solved = maze.Solve(MazeSolver::Solution::AlgorithmicRunner);
 
 	std::cout << "The maze " << (solved ? "is" : "cannot be") << " solved." << std::endl;
 

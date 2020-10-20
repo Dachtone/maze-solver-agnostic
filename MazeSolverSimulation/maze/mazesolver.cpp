@@ -9,7 +9,40 @@ MazeSolver::Solver::Solver(ScanFunction scanFunction, MovementFunction moveFunct
 	this->moveFunction = moveFunction;
 }
 
-bool MazeSolver::Solver::Solve()
+bool MazeSolver::Solver::Solve(Solution solution)
+{
+	switch (solution)
+	{
+	case Solution::AlgorithmicRunner:
+		return AlgorithmicRunnerSolution();
+	case Solution::PeriodicCorrection:
+		return PeriodicCorrectionSolution();
+	default:
+		assert(false); // Tried to solve using a not implemented solution
+	}
+}
+
+bool MazeSolver::Solver::PeriodicCorrectionSolution()
+{
+	/*
+		let I be a runner
+		let L be a list
+		let F be a path
+		do
+			F = shortest path from I.CurrentPoint to the exit with L considered
+			do
+				I.Go(F.NextPoint)
+				if I reached the exit
+					end
+				L.Add(I.AdjacentObstacles)
+			while I.CanGoTo(F.NextPoint)
+		while F not empty
+	*/
+
+	return true; // Not implemented yet
+}
+
+bool MazeSolver::Solver::AlgorithmicRunnerSolution()
 {
 	/*
 		let I be a runner
@@ -34,7 +67,7 @@ bool MazeSolver::Solver::Solve()
 			label p as discovered
 			for w in M.AdjacentEdges(p)
 				if w is not discovered and is accessible and not in S
-					S.push(w)
+					S.Push(w)
 		while S is not empty
 	*/
 

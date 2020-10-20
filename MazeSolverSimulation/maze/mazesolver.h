@@ -12,6 +12,12 @@ namespace MazeSolver
 		Down
 	};
 
+	enum class Solution : unsigned char
+	{
+		PeriodicCorrection,
+		AlgorithmicRunner
+	};
+
 	/// <summary>
 	/// A function type for the scan function with signature:
 	/// bool Scan(int point)
@@ -61,8 +67,22 @@ namespace MazeSolver
 		/// <summary>
 		/// Solves the maze.
 		/// </summary>
+		/// <param name="solution">The solution to use when solving.</param>
 		/// <returns>True if the maze is solved, false if there are no paths to the exit.</returns>
-		bool Solve();
+		bool Solve(Solution solution);
+
+	private:
+		/// <summary>
+		/// Follows the shortest path, if an obstacle is hit, the shortest path is recalculated.
+		/// </summary>
+		/// <returns>True if the maze is solved, false if there are no paths to the exit.</returns>
+		bool PeriodicCorrectionSolution();
+
+		/// <summary>
+		/// An algorithm based on DFS with backtracking.
+		/// </summary>
+		/// <returns>True if the maze is solved, false if there are no paths to the exit.</returns>
+		bool AlgorithmicRunnerSolution();
 
 	private:
 		bool IsDiscovered(int point);
