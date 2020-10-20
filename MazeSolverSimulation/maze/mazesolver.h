@@ -90,7 +90,6 @@ namespace MazeSolver
 		/// <returns>True if the maze is solved, false if there are no paths to the exit.</returns>
 		bool AlgorithmicRunnerSolution();
 
-	public:
 		/// <summary>
 		/// Searches for the shortest path.
 		/// </summary>
