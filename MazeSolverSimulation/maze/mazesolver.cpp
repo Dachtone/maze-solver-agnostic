@@ -129,7 +129,6 @@ bool MazeSolver::Solver::GetShortestPath(int initialPoint, List<Obstacle> obstac
 					label w as discovered
 					Q.Push(w)
 		while Q is not empty
-
 	*/
 
 
