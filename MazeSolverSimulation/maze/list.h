@@ -115,6 +115,18 @@ namespace MazeSolver
 		}
 
 		/// <summary>
+		/// Peek into the list.
+		/// </summary>
+		/// <returns>A value.</returns>
+		T Peek()
+		{
+			// The stack should be non-empty
+			assert(!IsEmpty());
+
+			return vector.back();
+		}
+
+		/// <summary>
 		/// Pop a value from the list.
 		/// </summary>
 		/// <returns>A popped value.</returns>
@@ -130,15 +142,15 @@ namespace MazeSolver
 		}
 
 		/// <summary>
-		/// Peek into the list.
+		/// Peek into the front of the list.
 		/// </summary>
 		/// <returns>A value.</returns>
-		T Peek()
+		T PeekFront()
 		{
 			// The stack should be non-empty
 			assert(!IsEmpty());
-			
-			return vector.back();
+
+			return vector.front();
 		}
 
 		/// Dequeue a value from the list.

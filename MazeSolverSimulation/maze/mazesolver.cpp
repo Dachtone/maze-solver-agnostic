@@ -23,87 +23,6 @@ bool MazeSolver::Solver::Solve(Solution solution)
 	return false;
 }
 
-bool MazeSolver::Solver::PeriodicCorrectionSolution()
-{
-	/*
-		let I be a runner
-		let L be a list
-		let F be a path
-		do
-			F = shortest path from I.CurrentPoint to the exit with L considered
-			do
-				if I reached the exit
-					end
-				L.Add(I.AdjacentObstacles)
-				if I.CanGoTo(F.NextPoint)
-					I.Go(F.NextPoint)
-			while I.CanGoTo(F.NextPoint)
-		while F not empty
-	*/
-
-	List<Obstacle> obstacles;
-	int previousPoint = CurrentPoint;
-
-	Stack<int> path;
-	while (GetShortestPath(CurrentPoint, obstacles, path))
-	{
-		bool pathIsBlocked = false;
-		do
-		{
-			if (CurrentPoint == EndPoint) // Reached the end
-				return true;
-
-			// 4 possible directions
-			for (unsigned int i = 0; i < 4; i++)
-			{
-				int adjacent = GetAdjacent(i);
-
-				if (GetDirection(adjacent) == Direction::Invalid)
-					continue;
-
-				if (adjacent == previousPoint)
-					continue;
-
-				// Skip if we already know there's an obstacle
-				bool obstacleMemorized = false;
-				for (Obstacle &obstacle : obstacles)
-				{
-					if ((adjacent == obstacle.First && CurrentPoint == obstacle.Second) ||
-						(adjacent == obstacle.Second && CurrentPoint == obstacle.First))
-					{
-						obstacleMemorized = true;
-						break;
-					}
-				}
-
-				if (obstacleMemorized)
-					continue;
-
-				if (!IsAccessible(adjacent))
-				{
-					obstacles.Push(Obstacle(adjacent, CurrentPoint));
-
-					// Path is blocked if there's an obstacle in front of the next point in the calculated path
-					if (adjacent == path.Peek())
-					{
-						pathIsBlocked = true;
-						path.Pop(); // No longer the preferred direction
-					}
-				}
-			}
-
-			if (!pathIsBlocked)
-			{
-				previousPoint = CurrentPoint;
-				Move(path.Pop());
-			}
-		}
-		while (!pathIsBlocked);
-	}
-
-	return false;
-}
-
 bool MazeSolver::Solver::GetShortestPath(int initialPoint, List<Obstacle> obstacles, Stack<int> &path)
 {
 	/*
@@ -131,7 +50,6 @@ bool MazeSolver::Solver::GetShortestPath(int initialPoint, List<Obstacle> obstac
 		while Q is not empty
 	*/
 
-
 	// The parent point for each point
 	int previous[Width * Height] = { 0 }; // Initialized to zero
 	Queue<int> queue;
@@ -141,17 +59,19 @@ bool MazeSolver::Solver::GetShortestPath(int initialPoint, List<Obstacle> obstac
 	Discover(initialPoint);
 	queue.Push(initialPoint);
 
-	int point;
+	int point = queue.Peek();
 	do
 	{
-		point = queue.Pop();
+		// Direction previousDirection = GetDirection(queue.Peek(), point);
 
+		point = queue.Pop();
 		if (point == EndPoint)
 			break;
 
 		// 4 possible directions
 		for (unsigned int i = 0; i < 4; i++)
 		{
+			// int adjacent = GetAdjacent(i, point, previousDirection);
 			int adjacent = GetAdjacent(i, point, false);
 			if (IsDiscovered(adjacent) || GetDirection(adjacent, point) == Direction::Invalid)
 				continue;
@@ -177,6 +97,11 @@ bool MazeSolver::Solver::GetShortestPath(int initialPoint, List<Obstacle> obstac
 	}
 	while (!queue.IsEmpty());
 
+	// Return the result
+
+	if (!path.IsEmpty())
+		path = Stack<int>(); // Initialize to an empty path
+
 	if (point != EndPoint) // The exit is unreachable
 		return false;
 
@@ -188,107 +113,6 @@ bool MazeSolver::Solver::GetShortestPath(int initialPoint, List<Obstacle> obstac
 	}
 	
 	return true;
-}
-
-bool MazeSolver::Solver::AlgorithmicRunnerSolution()
-{
-	/*
-		let I be a runner
-		let M be a maze
-		let S be a stack
-		let B be a path
-		let p be a point
-		p = start
-		S.Push(p)
-		do
-			p = S.Pop()
-			if p is not adjacent or not accessible
-				I.Backtrack(B) until p is adjacent and accessible
-				B.Minus()
-
-			B.Plus()
-			I.Go(p)
-
-			if p is the exit
-				end
-
-			label p as discovered
-			for w in M.AdjacentEdges(p)
-				if w is not discovered and is accessible and not in S
-					S.Push(w)
-		while S is not empty
-	*/
-
-	if (CurrentPoint == EndPoint)
-		return true;
-
-	List<int> memory;
-	Stack<int> path;
-
-	int point = CurrentPoint;
-	memory.Push(point);
-	do
-	{
-		point = memory.Pop();
-
-		if (CurrentPoint != point)
-		{
-			if (!IsAdjacent(point) || !IsAccessible(point)) // There are no direct paths
-			{
-				// Backtrack
-				bool foundNextPoint = false;
-				while (!path.IsEmpty())
-				{
-					int parent = path.Pop();
-					Move(parent);
-
-					// 4 possible directions
-					for (unsigned int i = 0; i < 4; i++)
-					{
-						int adjacent = GetAdjacent(i);
-						if (adjacent == point && IsAccessible(adjacent))
-						{
-							foundNextPoint = true;
-							break;
-						}
-					}
-
-					if (foundNextPoint)
-						break;
-				}
-
-				// The point should always be found by backtracking
-				assert(foundNextPoint);
-			}
-
-			path.Push(CurrentPoint);
-			Move(point);
-
-			if (point == EndPoint) // Reached the end
-				return true;
-		}
-
-		Discover(point);
-
-		// 4 possible directions
-		for (unsigned int i = 0; i < 4; i++)
-		{
-			int adjacent = GetAdjacent(i);
-			if (IsDiscovered(adjacent) || !IsAccessible(adjacent))
-				continue;
-
-			for (int memorizedPoint : memory)
-			{
-				if (memorizedPoint == adjacent)
-					continue;
-			}
-
-			memory.Push(adjacent);
-		}
-	}
-	while (!memory.IsEmpty());
-
-	return false;
 }
 
 bool MazeSolver::Solver::IsDiscovered(int point)
@@ -319,6 +143,40 @@ bool MazeSolver::Solver::IsAdjacent(int point, int currentPoint)
 	return GetDirection(point, currentPoint) != Direction::Invalid;
 }
 
+int MazeSolver::Solver::GetAdjacent(Direction direction, int currentPoint)
+{
+	int point;
+	switch (direction)
+	{
+	case Direction::Up:
+		point = currentPoint + Width;
+		if (point >= Width * Height)
+			return -1;
+
+		return point;
+	case Direction::Right:
+		point = currentPoint + 1;
+		if (point % Width == 0)
+			return -1;
+
+		return point;
+	case Direction::Left:
+		if (currentPoint % Width == 0)
+			return -1;
+
+		point = currentPoint - 1;
+		return point;
+	case Direction::Down:
+		if (currentPoint < Width)
+			return -1;
+
+		point = currentPoint - Width;
+		return point;
+	default:
+		return -1;
+	}
+}
+
 int MazeSolver::Solver::GetAdjacent(unsigned int index)
 {
 	return GetAdjacent(index, CurrentPoint);
@@ -329,36 +187,20 @@ int MazeSolver::Solver::GetAdjacent(unsigned int index, int currentPoint, bool r
 	assert(index < 4);
 
 	// Directional preference: Right -> Up -> Left -> Down
+
 	if (reverse)
 		index = 3 - index;
 
-	int point;
 	switch (index)
 	{
 	case 0: // Right
-		point = currentPoint + 1;
-		if (point % Width == 0)
-			return -1;
-
-		return point;
+		return GetAdjacent(Direction::Right, currentPoint);
 	case 1: // Up
-		point = currentPoint + Width;
-		if (point >= Width * Height)
-			return -1;
-
-		return point;
+		return GetAdjacent(Direction::Up, currentPoint);
 	case 2: // Left
-		if (currentPoint % Width == 0)
-			return -1;
-
-		point = currentPoint - 1;
-		return point;
+		return GetAdjacent(Direction::Left, currentPoint);
 	case 3: // Down
-		if (currentPoint < Width)
-			return -1;
-
-		point = currentPoint - Width;
-		return point;
+		return GetAdjacent(Direction::Down, currentPoint);
 	/*
 	case 2:
 	case 3:
@@ -380,6 +222,46 @@ int MazeSolver::Solver::GetAdjacent(unsigned int index, int currentPoint, bool r
 
 		return point;
 	*/
+	}
+
+	// Code should never be able to get here
+	return -1;
+}
+
+int MazeSolver::Solver::GetAdjacent(unsigned int index, Direction previousDirection)
+{
+	return GetAdjacent(index, CurrentPoint, previousDirection);
+}
+
+int MazeSolver::Solver::GetAdjacent(unsigned int index, int currentPoint, Direction previousDirection)
+{
+	assert(index < 4);
+
+	// Directional preference: Move in a straight line as much as possible
+	// Right -> Up -> Left -> Down
+	
+	switch (index)
+	{
+	case 0:
+		if (previousDirection == Direction::Up)
+			return GetAdjacent(Direction::Up, currentPoint);
+		else
+			return GetAdjacent(Direction::Right, currentPoint);
+	case 1:
+		if (previousDirection == Direction::Up)
+			return GetAdjacent(Direction::Right, currentPoint);
+		else
+			return GetAdjacent(Direction::Up, currentPoint);
+	case 2:
+		if (previousDirection == Direction::Down)
+			return GetAdjacent(Direction::Down, currentPoint);
+		else
+			return GetAdjacent(Direction::Left, currentPoint);
+	case 3:
+		if (previousDirection == Direction::Down)
+			return GetAdjacent(Direction::Left, currentPoint);
+		else
+			return GetAdjacent(Direction::Down, currentPoint);
 	}
 
 	// Code should never be able to get here

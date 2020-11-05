@@ -41,21 +41,21 @@ namespace MazeSolver
 		}
 
 		/// <summary>
-		/// Pop a value from the stack.
-		/// </summary>
-		/// <returns>A popped value.</returns>
-		T Pop()
-		{
-			return list.Pop();
-		}
-
-		/// <summary>
 		/// Peek into the stack.
 		/// </summary>
 		/// <returns>A value.</returns>
 		T Peek()
 		{
 			return list.Peek();
+		}
+
+		/// <summary>
+		/// Pop a value from the stack.
+		/// </summary>
+		/// <returns>A popped value.</returns>
+		T Pop()
+		{
+			return list.Pop();
 		}
 
 		/// <summary>

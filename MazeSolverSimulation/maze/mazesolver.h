@@ -107,8 +107,11 @@ namespace MazeSolver
 		bool IsAdjacent(int point);
 		bool IsAdjacent(int point, int currentPoint);
 
+		int GetAdjacent(Direction direction, int currentPoint);
 		int GetAdjacent(unsigned int index);
 		int GetAdjacent(unsigned int index, int currentPoint, bool reverse = true);
+		int GetAdjacent(unsigned int index, Direction previousDirection);
+		int GetAdjacent(unsigned int index, int currentPoint, Direction previousDirection);
 
 		Direction GetDirection(int point);
 		Direction GetDirection(int point, int currentPoint);

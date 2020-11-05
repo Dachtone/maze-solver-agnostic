@@ -41,6 +41,15 @@ namespace MazeSolver
 		}
 
 		/// <summary>
+		/// Peek into the queue.
+		/// </summary>
+		/// <returns>A value.</returns>
+		T Peek()
+		{
+			return list.PeekFront();
+		}
+
+		/// <summary>
 		/// Pop a value from the queue.
 		/// </summary>
 		/// <returns>A popped value.</returns>
