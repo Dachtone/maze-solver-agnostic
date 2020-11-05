@@ -6,6 +6,7 @@ bool MazeSolver::Solver::PeriodicCorrectionSolution()
 		let I be a runner
 		let L be a list
 		let F be a path
+
 		repeat
 			F = shortest path from I.CurrentPoint to the exit with L considered
 			if F is not found
