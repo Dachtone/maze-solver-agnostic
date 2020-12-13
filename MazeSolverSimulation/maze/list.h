@@ -4,10 +4,11 @@
 #include <cassert>
 #endif
 
-#include <vector>
+// #include <vector>
 
 namespace MazeSolver
 {
+	// Iterator Class
 	template<typename List>
 	class ListIterator
 	{
@@ -91,13 +92,52 @@ namespace MazeSolver
 		/// Constructor.
 		/// </summary>
 		List()
-			: vector() {}
+		{
+			size = 0;
+			capacity = grow;
+			array = new T[capacity];
+		}
 
 		/// <summary>
 		/// Copy constructor.
 		/// </summary>
-		List(List<T> &other)
-			: vector(other.vector) {}
+		List(List<T>& other)
+		{
+			CopyFrom(other);
+		}
+
+		/// <summary>
+		/// Destructor.
+		/// </summary>
+		~List()
+		{
+			if (array != nullptr)
+			{
+				delete[] array;
+				array = nullptr;
+			}
+		}
+
+		/// <summary>
+		/// Assignment operator.
+		/// </summary>
+		/// <param name="other">The list to copy to this list.</param>
+		/// <returns>This list.</returns>
+		List<T>& operator=(const List<T>& other)
+		{
+			CopyFrom(other);
+
+			return *this;
+		}
+
+		/// <summary>
+		/// Gets the list size.
+		/// </summary>
+		/// <returns>The size of the list.</returns>
+		int Size()
+		{
+			return size;
+		}
 
 		/// <summary>
 		/// Checks whether the list is empty.
@@ -105,7 +145,7 @@ namespace MazeSolver
 		/// <returns>True if empty, false otherwise.</returns>
 		bool IsEmpty()
 		{
-			return vector.empty();
+			return size == 0;
 		}
 
 		/// <summary>
@@ -114,7 +154,10 @@ namespace MazeSolver
 		/// <param name="value">A value to push.</param>
 		void Push(T value)
 		{
-			vector.push_back(value);
+			if (size == capacity)
+				Resize(capacity + grow);
+
+			array[size++] = value;
 		}
 
 		/// <summary>
@@ -128,7 +171,7 @@ namespace MazeSolver
 			assert(!IsEmpty());
 #endif
 
-			return vector.back();
+			return array[size - 1];
 		}
 
 		/// <summary>
@@ -142,8 +185,8 @@ namespace MazeSolver
 			assert(!IsEmpty());
 #endif
 
-			T value = vector.back();
-			vector.pop_back();
+			T value = array[size - 1];
+			size--;
 
 			return value;
 		}
@@ -159,7 +202,7 @@ namespace MazeSolver
 			assert(!IsEmpty());
 #endif
 
-			return vector.front();
+			return array[0];
 		}
 
 		/// Dequeue a value from the list.
@@ -172,20 +215,21 @@ namespace MazeSolver
 			assert(!IsEmpty());
 #endif
 
-			T value = vector.front();
-			vector.erase(vector.begin());
+			T value = array[0];
+			for (unsigned int i = 1; i < size; i++)
+				array[i - 1] = array[i];
+			size--;
 
 			return value;
 		}
 
 		// Iterating
-
 		Iterator begin()
 		{
 			if (IsEmpty())
 				return Iterator(nullptr);
 
-			return Iterator(&(*(vector.begin())));
+			return Iterator(&array[0]);
 		}
 
 		Iterator end()
@@ -193,12 +237,57 @@ namespace MazeSolver
 			if (IsEmpty())
 				return Iterator(nullptr);
 
-			return Iterator(&(*(--vector.end())) + 1);
+			return Iterator((&array[size - 1]) + 1);
+		}
+
+	private:
+		/// <summary>
+		/// Copy from another list.
+		/// </summary>
+		/// <param name="other">The list to copy from.</param>
+		void CopyFrom(const List<T>& other)
+		{
+			size = other.size;
+			capacity = size;
+
+			if (array != nullptr)
+				delete[] array;
+			array = new T[capacity];
+
+			for (unsigned int i = 0; i < size; i++)
+				array[i] = other.array[i];
+		}
+
+		/// <summary>
+		/// Resizes the array.
+		/// </summary>
+		/// <param name="newCapacity">The new size of the array.</param>
+		void Resize(unsigned int newCapacity)
+		{
+			if (capacity == newCapacity)
+				return;
+
+			T* newArray = new T[newCapacity];
+			for (unsigned int i = 0; i < size && i < newCapacity; i++)
+				newArray[i] = array[i];
+			
+			delete[] array;
+			array = newArray;
+
+			capacity = newCapacity;
+			if (size > capacity)
+				size = capacity;
 		}
 
 	private:
 		// The implementation
-		std::vector<T> vector;
+		T* array = nullptr;
+		// std::vector<T> vector;
+
+		unsigned int size;
+		unsigned int capacity;
+
+		const unsigned int grow = 5;
 
 	};
 

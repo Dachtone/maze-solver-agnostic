@@ -17,10 +17,28 @@ namespace MazeSolver
 		Stack() {}
 
 		/// <summary>
+		/// Constructor from a stack.
+		/// </summary>
+		Stack(Stack<T>& other)
+			: list(other.list) {}
+
+		/// <summary>
 		/// Constructor from a list.
 		/// </summary>
-		Stack(List<T> other)
+		Stack(List<T>& other)
 			: list(other) {}
+
+		/// <summary>
+		/// Assignment operator.
+		/// </summary>
+		/// <param name="other">The stack to copy to this stack.</param>
+		/// <returns>This stack.</returns>
+		Stack<T>& operator=(const Stack<T>& other)
+		{
+			list = other.list;
+
+			return *this;
+		}
 
 		/// <summary>
 		/// Checks whether the stack is empty.
