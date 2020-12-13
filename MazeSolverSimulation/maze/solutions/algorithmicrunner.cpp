@@ -68,7 +68,9 @@ bool MazeSolver::Solver::AlgorithmicRunnerSolution()
 				}
 
 				// The point should always be found by backtracking
+#if defined MAZESOLVER_ASSERTS_ALLOWED
 				assert(foundNextPoint);
+#endif
 			}
 
 			path.Push(CurrentPoint);

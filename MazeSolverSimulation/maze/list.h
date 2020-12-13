@@ -1,6 +1,9 @@
 #pragma once
 
+#if defined MAZESOLVER_ASSERTS_ALLOWED
 #include <cassert>
+#endif
+
 #include <vector>
 
 namespace MazeSolver
@@ -121,7 +124,9 @@ namespace MazeSolver
 		T Peek()
 		{
 			// The stack should be non-empty
+#if defined MAZESOLVER_ASSERTS_ALLOWED
 			assert(!IsEmpty());
+#endif
 
 			return vector.back();
 		}
@@ -133,7 +138,9 @@ namespace MazeSolver
 		T Pop()
 		{
 			// The stack should be non-empty
+#if defined MAZESOLVER_ASSERTS_ALLOWED
 			assert(!IsEmpty());
+#endif
 
 			T value = vector.back();
 			vector.pop_back();
@@ -148,7 +155,9 @@ namespace MazeSolver
 		T PeekFront()
 		{
 			// The stack should be non-empty
+#if defined MAZESOLVER_ASSERTS_ALLOWED
 			assert(!IsEmpty());
+#endif
 
 			return vector.front();
 		}
@@ -159,7 +168,9 @@ namespace MazeSolver
 		T Dequeue()
 		{
 			// The stack should be non-empty
+#if defined MAZESOLVER_ASSERTS_ALLOWED
 			assert(!IsEmpty());
+#endif
 
 			T value = vector.front();
 			vector.erase(vector.begin());

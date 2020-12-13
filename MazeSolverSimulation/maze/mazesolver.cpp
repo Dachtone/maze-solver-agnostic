@@ -15,8 +15,10 @@ bool MazeSolver::Solver::Solve(Solution solution)
 		return AlgorithmicRunnerSolution();
 	case Solution::PeriodicCorrection:
 		return PeriodicCorrectionSolution();
+#if defined MAZESOLVER_ASSERTS_ALLOWED
 	default:
 		assert(false); // Tried to solve using a not implemented solution
+#endif
 	}
 
 	// Code should never be able to get here
@@ -32,6 +34,7 @@ bool MazeSolver::Solver::GetShortestPath(int initialPoint, List<Obstacle> obstac
 		let p be a point
 		let a be a point
 
+		Q.push(initial point)
 		do
 			p = Q.Pop()
 
@@ -184,7 +187,9 @@ int MazeSolver::Solver::GetAdjacent(unsigned int index)
 
 int MazeSolver::Solver::GetAdjacent(unsigned int index, int currentPoint, bool reverse)
 {
+#if defined MAZESOLVER_ASSERTS_ALLOWED
 	assert(index < 4);
+#endif
 
 	// Directional preference: Right -> Up -> Left -> Down
 
@@ -235,7 +240,9 @@ int MazeSolver::Solver::GetAdjacent(unsigned int index, Direction previousDirect
 
 int MazeSolver::Solver::GetAdjacent(unsigned int index, int currentPoint, Direction previousDirection)
 {
+#if defined MAZESOLVER_ASSERTS_ALLOWED
 	assert(index < 4);
+#endif
 
 	// Directional preference: Move in a straight line as much as possible
 	// Right -> Up -> Left -> Down
@@ -312,7 +319,9 @@ bool MazeSolver::Solver::IsAccessible(int point)
 void MazeSolver::Solver::Move(int point)
 {
 	Direction direction = GetDirection(point);
+#if defined MAZESOLVER_ASSERTS_ALLOWED
 	assert(direction != Direction::Invalid);
+#endif
 
 	CurrentPoint = point;
 	moveFunction(direction);

@@ -1,5 +1,8 @@
 #pragma once
 
+// Uncomment this to enable asserts
+// #define MAZESOLVER_ASSERTS_ALLOWED
+
 #include "list.h"
 #include "stack.h"
 #include "queue.h"
