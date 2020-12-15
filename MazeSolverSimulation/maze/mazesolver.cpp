@@ -25,7 +25,7 @@ bool MazeSolver::Solver::Solve(Solution solution)
 	return false;
 }
 
-bool MazeSolver::Solver::GetShortestPath(int initialPoint, List<Obstacle> obstacles, Stack<int> &path)
+bool MazeSolver::Solver::GetShortestPath(int initialPoint, List<Obstacle>& obstacles, Stack<int> &path)
 {
 	/*
 		let M be a maze

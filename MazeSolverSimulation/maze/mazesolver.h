@@ -100,7 +100,7 @@ namespace MazeSolver
 		/// <param name="obstacles">A list of obstacles.</param>
 		/// <param name="path">A place to store the shortest path.</param>
 		/// <returns>True if the maze is solved, false if there are no paths to the exit.</returns>
-		bool GetShortestPath(int initialPoint, MazeSolver::List<MazeSolver::Obstacle> obstacles, MazeSolver::Stack<int>& path);
+		bool GetShortestPath(int initialPoint, MazeSolver::List<MazeSolver::Obstacle>& obstacles, MazeSolver::Stack<int>& path);
 
 	private:
 		bool IsDiscovered(int point);

@@ -248,7 +248,11 @@ namespace MazeSolver
 		void CopyFrom(const List<T>& other)
 		{
 			size = other.size;
-			capacity = size;
+
+			if (size != 0)
+				capacity = size;
+			else
+				capacity = grow;
 
 			if (array != nullptr)
 				delete[] array;
