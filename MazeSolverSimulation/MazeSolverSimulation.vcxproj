@@ -146,8 +146,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="maze\mazesolver.cpp" />
     <ClCompile Include="maze\obstacle.cpp" />
-    <ClCompile Include="maze\solutions\algorithmicrunner.cpp" />
-    <ClCompile Include="maze\solutions\periodiccorrection.cpp" />
+    <ClCompile Include="maze\algorithmicrunner.cpp" />
+    <ClCompile Include="maze\periodiccorrection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="maze\list.h" />

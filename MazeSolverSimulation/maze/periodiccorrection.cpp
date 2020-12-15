@@ -1,4 +1,4 @@
-#include "../mazesolver.h"
+#include "mazesolver.h"
 
 bool MazeSolver::Solver::PeriodicCorrectionSolution()
 {

@@ -24,10 +24,10 @@
     <ClCompile Include="maze\obstacle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="maze\solutions\periodiccorrection.cpp">
+    <ClCompile Include="maze\algorithmicrunner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="maze\solutions\algorithmicrunner.cpp">
+    <ClCompile Include="maze\periodiccorrection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
